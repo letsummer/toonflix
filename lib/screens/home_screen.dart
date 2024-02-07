@@ -48,6 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void resetTimer() {
+    setState(() {
+      totalSeconds = twentyFiveMinutes;
+    });
+  }
+
   String format(int seconds) {
     var duration = Duration(seconds: seconds);
     var result = duration.toString().split(".").first.substring(2, 7);
@@ -82,11 +88,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconSize: 120,
                 onPressed: isRunning ? onPausePressed : onStartPressed,
                 color: Theme.of(context).cardColor,
-                icon: Icon(
-                  isRunning
-                      ? Icons.pause_circle_outline
-                      : Icons.play_circle_outline,
-                ),
+                icon: isRunning
+                    ? const Icon(Icons.pause_circle_outline)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.play_circle_outline),
+                          IconButton(
+                            onPressed: resetTimer,
+                            icon: const Icon(Icons.stop_circle_outlined),
+                          ),
+                        ],
+                      ),
               ),
             ),
           ),
