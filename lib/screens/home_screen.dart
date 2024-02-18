@@ -1,10 +1,16 @@
-import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:toonflix/models/webtoon_model.dart';
+import 'package:toonflix/services/api_service.dart';
+import 'package:toonflix/widgets/webtoon_widget.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
+<<<<<<< HEAD
+  Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
+=======
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -48,39 +54,38 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void resetTimer() {
-    setState(() {
-      totalSeconds = twentyFiveMinutes;
-    });
-  }
-
   String format(int seconds) {
     var duration = Duration(seconds: seconds);
     var result = duration.toString().split(".").first.substring(2, 7);
     // print(duration.toString().split(".").first.substring(2, 7));
     return result;
   }
+>>>>>>> parent of d911954 (일시정지 후 정지버튼 또한 나타나게)
 
   @override
   Widget build(BuildContext context) {
+    print(webtoons);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                format(totalSeconds),
-                style: TextStyle(
-                  color: Theme.of(context).cardColor,
-                  fontSize: 89,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 2,
+        foregroundColor: Colors.green,
+        backgroundColor: Colors.white,
+        title: const Text(
+          "Today's 툰s",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w400,
           ),
+<<<<<<< HEAD
+        ),
+      ),
+      body: FutureBuilder(
+        future: webtoons,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+=======
           Flexible(
             flex: 3,
             child: Center(
@@ -88,59 +93,55 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconSize: 120,
                 onPressed: isRunning ? onPausePressed : onStartPressed,
                 color: Theme.of(context).cardColor,
-                icon: isRunning
-                    ? const Icon(Icons.pause_circle_outline)
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.play_circle_outline),
-                          IconButton(
-                            onPressed: resetTimer,
-                            icon: const Icon(Icons.stop_circle_outlined),
-                          ),
-                        ],
-                      ),
+                icon: Icon(
+                  isRunning
+                      ? Icons.pause_circle_outline
+                      : Icons.play_circle_outline,
+                ),
               ),
             ),
           ),
           Flexible(
             flex: 1,
             child: Row(
+>>>>>>> parent of d911954 (일시정지 후 정지버튼 또한 나타나게)
               children: [
+                const SizedBox(
+                  height: 50,
+                ),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Pomodoros",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color:
-                                Theme.of(context).textTheme.displayLarge!.color,
-                          ),
-                        ),
-                        Text(
-                          "$totalPmodoros",
-                          style: TextStyle(
-                            fontSize: 58,
-                            color:
-                                Theme.of(context).textTheme.displayLarge!.color,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: makeList(snapshot),
                 ),
               ],
-            ),
-          )
-        ],
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 20,
+      ),
+      separatorBuilder: (context, index) => const SizedBox(
+        width: 40,
+      ),
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      itemBuilder: (context, index) {
+        var webtoon = snapshot.data![index];
+        return Webtoon(
+          title: webtoon.title,
+          thumb: webtoon.thumb,
+          id: webtoon.id,
+        );
+      },
     );
   }
 }
